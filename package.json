@@ -3,14 +3,19 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite dev --port 3000",
-    "start": "node .output/server/index.mjs",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "vite dev --port 3000",
+    "dev:backend": "cd backend && npm run dev",
+    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
+    "start:frontend": "vite preview --port 3000",
+    "start:backend": "cd backend && npm start",
     "build": "vite build",
     "serve": "vite preview",
     "test": "vitest run",
     "format": "biome format",
     "lint": "biome lint",
-    "check": "biome check"
+    "check": "biome check",
+    "install:all": "npm install && cd backend && npm install"
   },
   "dependencies": {
     "@faker-js/faker": "^9.6.0",
@@ -39,6 +44,7 @@
     "@trpc/tanstack-react-query": "^11.4.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "concurrently": "^8.2.2",
     "lucide-react": "^0.544.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
