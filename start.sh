@@ -12,12 +12,12 @@ fi
 # Install dependencies if node_modules doesn't exist
 if [ ! -d "node_modules" ]; then
     echo "📦 Installing frontend dependencies..."
-    npm install
+    bun install
 fi
 
 if [ ! -d "backend/node_modules" ]; then
     echo "📦 Installing backend dependencies..."
-    cd backend && npm install && cd ..
+    cd backend && bun install && cd ..
 fi
 
 echo "🏗️  Starting both frontend and backend..."

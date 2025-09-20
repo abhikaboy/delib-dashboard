@@ -6,6 +6,16 @@ import dotenv from 'dotenv';
 // Load environment variables
 dotenv.config();
 
+// Print all environment variables for debugging
+console.log('🔍 Environment Variables:');
+console.log('========================');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('PORT:', process.env.PORT);
+console.log('MONGODB_URI:', process.env.MONGODB_URI ? '[SET]' : '[NOT SET]');
+console.log('DATABASE_NAME:', process.env.DATABASE_NAME);
+console.log('COLLECTION_NAME:', process.env.COLLECTION_NAME);
+console.log('========================');
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -20,11 +30,30 @@ app.use(express.json());
 // Connect to MongoDB
 async function connectToMongoDB() {
   try {
+    console.log('🔌 Attempting to connect to MongoDB...');
+    console.log('MONGODB_URI:', process.env.MONGODB_URI ? process.env.MONGODB_URI.replace(/\/\/[^:]+:[^@]+@/, '//***:***@') : '[NOT SET]');
+    
     await client.connect();
-    db = client.db(process.env.DATABASE_NAME);
-    console.log(`Connected to MongoDB database: ${process.env.DATABASE_NAME}`);
+    
+    // Ensure we're using the fall2025 database
+    const databaseName = process.env.DATABASE_NAME || 'fall2025';
+    db = client.db(databaseName);
+    
+    console.log(`✅ Connected to MongoDB database: ${databaseName}`);
+    
+    // Test the connection by listing collections
+    const collections = await db.listCollections().toArray();
+    console.log(`📁 Available collections: ${collections.map(c => c.name).join(', ')}`);
+    
+    // Test if we can access the applications collection
+    const collectionName = process.env.COLLECTION_NAME || 'applications';
+    const testCollection = db.collection(collectionName);
+    const count = await testCollection.countDocuments();
+    console.log(`📊 Documents in ${collectionName} collection: ${count}`);
+    
   } catch (error) {
-    console.error('MongoDB connection error:', error);
+    console.error('❌ MongoDB connection error:', error);
+    console.error('Full error details:', error.message);
     process.exit(1);
   }
 }

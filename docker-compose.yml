@@ -1,0 +1,42 @@
+services:
+  delibs-app:
+    build: .
+    ports:
+      - "3000:3000"  # Frontend
+      - "3001:3001"  # Backend API
+    environment:
+      # Backend environment variables
+      - MONGODB_URI=${MONGODB_URI}
+      - DATABASE_NAME=fall2025
+      - COLLECTION_NAME=${COLLECTION_NAME:-applications}
+      - PORT=3001
+      - NODE_ENV=production
+    env_file:
+      - ./backend/.env
+    volumes:
+      # Mount backend .env file if it exists
+      - ./backend/.env:/app/backend/.env:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: MongoDB service for local development
+  # Uncomment if you want to run MongoDB locally instead of using Atlas
+  # mongodb:
+  #   image: mongo:6
+  #   ports:
+  #     - "27017:27017"
+  #   environment:
+  #     - MONGO_INITDB_ROOT_USERNAME=admin
+  #     - MONGO_INITDB_ROOT_PASSWORD=password
+  #     - MONGO_INITDB_DATABASE=delibs
+  #   volumes:
+  #     - mongodb_data:/data/db
+  #   restart: unless-stopped
+
+# volumes:
+#   mongodb_data:

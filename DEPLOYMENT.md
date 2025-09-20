@@ -1,5 +1,58 @@
 # Delibs Application Deployment Guide
 
+## 🐳 Docker Deployment (Recommended)
+
+### Quick Start with GitHub Container Registry
+
+The easiest way to deploy Delibs is using our pre-built Docker image from GitHub Container Registry:
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/abhikaboy/delib-dashboard.git
+cd delib-dashboard
+
+# 2. Create environment file
+cp env.example .env
+# Edit .env with your MongoDB connection details
+
+# 3. Deploy using production compose file
+./deploy-prod.sh
+```
+
+The application will be available at:
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:3001
+
+### Manual Docker Deployment
+
+If you prefer to build the image yourself:
+
+```bash
+# Build and run locally
+docker-compose up --build
+
+# Or use the production configuration
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+### GitHub Container Registry
+
+Our Docker images are automatically built and published to GitHub Container Registry on every push to the main branch.
+
+**Image:** `ghcr.io/abhikaboy/delib-dashboard:latest`
+
+**Available tags:**
+- `latest` - Latest stable build from main branch
+- `main` - Latest build from main branch
+- `v*` - Tagged releases
+
+**Pull command:**
+```bash
+docker pull ghcr.io/abhikaboy/delib-dashboard:latest
+```
+
+---
+
 ## 🗄️ Database Setup (MongoDB Atlas)
 
 ### Step 1: Create MongoDB Atlas Cluster
@@ -27,7 +80,7 @@
 2. Choose "Connect your application"
 3. Copy the connection string (looks like: `mongodb+srv://username:password@cluster.mongodb.net/`)
 4. Replace `<password>` with your actual password
-5. Add your database name at the end: `mongodb+srv://username:password@cluster.mongodb.net/delibs`
+5. Add your database name at the end: `mongodb+srv://username:password@cluster.mongodb.net/fall2025`
 
 ---
 
@@ -37,8 +90,8 @@
 Create a `.env` file in your `backend/` directory:
 
 ```env
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/delibs
-DATABASE_NAME=delibs
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/fall2025
+DATABASE_NAME=fall2025
 COLLECTION_NAME=applications
 PORT=3001
 NODE_ENV=production
