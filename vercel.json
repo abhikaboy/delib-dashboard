@@ -1,11 +1,9 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": ".output/public",
-  "framework": "vite",
-  "rewrites": [
+  "redirects": [
     {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "https://whale-app-8rs89.ondigitalocean.app/$1",
+      "permanent": false
     }
   ]
 }
