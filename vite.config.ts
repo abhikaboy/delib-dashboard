@@ -13,7 +13,8 @@ const config = defineConfig({
     tailwindcss(),
     tanstackStart({
       customViteReactPlugin: true,
-      target: 'node-server',
+      // Use static mode for Vercel deployment
+      target: process.env.VERCEL ? 'static' : 'node-server',
     }),
     viteReact(),
   ],
