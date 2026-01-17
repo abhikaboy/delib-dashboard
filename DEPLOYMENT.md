@@ -80,7 +80,7 @@ docker pull ghcr.io/abhikaboy/delib-dashboard:latest
 2. Choose "Connect your application"
 3. Copy the connection string (looks like: `mongodb+srv://username:password@cluster.mongodb.net/`)
 4. Replace `<password>` with your actual password
-5. Add your database name at the end: `mongodb+srv://username:password@cluster.mongodb.net/fall2025`
+5. Add your database name at the end: `mongodb+srv://username:password@cluster.mongodb.net/spring2026`
 
 ---
 
@@ -90,8 +90,8 @@ docker pull ghcr.io/abhikaboy/delib-dashboard:latest
 Create a `.env` file in your `backend/` directory:
 
 ```env
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/fall2025
-DATABASE_NAME=fall2025
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/spring2026
+DATABASE_NAME=spring2026
 COLLECTION_NAME=applications
 PORT=3001
 NODE_ENV=production

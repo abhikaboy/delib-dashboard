@@ -8,14 +8,14 @@ import patternImage from '../pattern.png'
 // API configuration
 const API_BASE_URL = 'http://localhost:3001/api'
 
-// Global averages for comparison
+// Global averages for comparison (Spring 2026 - based on 840 evaluations)
 const GLOBAL_AVERAGES = {
-  professional: 4.117078410311493,
-  willingness: 4.097744360902255,
-  brotherhood: 3.925886143931257,
-  teamwork: 4.0859291084855,
-  contribution_personal: 4.134264232008593,
-  contribution_akpsi: 3.9087003222341568,
+  professional: 3.454761904761905,
+  willingness: 3.4464285714285716,
+  brotherhood: 3.2654761904761904,
+  teamwork: 3.355952380952381,
+  contribution_personal: 3.4726190476190477,
+  contribution_akpsi: 3.261904761904762,
   // Calculate overall average from the individual averages
   get overall() {
     return (this.professional + this.willingness + this.brotherhood + this.teamwork + this.contribution_personal + this.contribution_akpsi) / 6
@@ -63,11 +63,11 @@ interface ApplicantData {
   "Please attach a copy of your resume as a PDF"?: string
   "Please upload a clear photo of yourself": string
   "What events did you attend?"?: string
-  "Please describe why you would like to become a brother of Alpha Kappa Psi (150 words or less)"?: string
-  "What about Alpha Kappa Psi gets you excited and why? (150 words or less)"?: string
-  "What do you think you can bring to our chapter? Why do you think you stand out from the other candidates? (150 words or less)"?: string
-  "Share something you want us to know that would make you a stronger candidate and has yet to be fully represented through your resume or application (150 words or less)"?: string
-  "Please list other organizations or time commitments you are involved with Include leadership positions you hold or plan on holding within the organization"?: string
+  "Please describe why you would like to become a brother of Alpha Kappa Psi"?: string
+  "What about Alpha Kappa Psi gets you excited and why?"?: string
+  "What do you think you can bring to our chapter? Why do you think you stand out from the other candidates?"?: string
+  "Share something you want us to know that would make you a stronger candidate and has yet to be fully represented through your resume or application"?: string
+  "Please list other organizations or time commitments you are involved with"?: any
   eval_data?: EvalData
 }
 
@@ -124,16 +124,46 @@ function RatingCard({ label, score, maxScore, globalAverage }: RatingCardProps) 
   const safeScore = typeof score === 'number' && !isNaN(score) ? score : 0
   
   const getScoreColor = () => {
-    if (safeScore >= 4.5) {
-      return 'bg-gradient-to-r from-[#4ade80] to-[#22c55e] bg-clip-text text-transparent' // muted green gradient
-    } else if (safeScore >= 4.0) {
+    if (!globalAverage) {
+      // Fallback to old logic if no global average provided
+      if (safeScore >= 4.5) {
+        return 'bg-gradient-to-r from-[#4ade80] to-[#22c55e] bg-clip-text text-transparent'
+      } else if (safeScore >= 4.0) {
+        return 'text-[#90ee90]'
+      } else if (safeScore >= 3.8) {
+        return 'text-white'
+      } else if (safeScore >= 3.5) {
+        return 'text-[#ff6b6b]'
+      } else {
+        return 'bg-gradient-to-r from-[#ef4444] to-[#dc2626] bg-clip-text text-transparent'
+      }
+    }
+    
+    // Calculate distance from global average
+    const difference = safeScore - globalAverage
+    
+    // Color based on distance from average
+    if (difference >= 1.0) {
+      // Significantly above average (1+ points)
+      return 'bg-gradient-to-r from-[#4ade80] to-[#22c55e] bg-clip-text text-transparent' // bright green gradient
+    } else if (difference >= 0.5) {
+      // Well above average (0.5-1.0 points)
+      return 'text-[#4ade80]' // green
+    } else if (difference >= 0.2) {
+      // Above average (0.2-0.5 points)
       return 'text-[#90ee90]' // light green
-    } else if (safeScore >= 3.8) {
+    } else if (difference >= -0.2) {
+      // Near average (±0.2 points)
       return 'text-white' // white
-    } else if (safeScore >= 3.5) {
-      return 'text-[#ff6b6b]' // light red
+    } else if (difference >= -0.5) {
+      // Below average (-0.5 to -0.2 points)
+      return 'text-[#fca5a5]' // light red
+    } else if (difference >= -1.0) {
+      // Well below average (-1.0 to -0.5 points)
+      return 'text-[#ef4444]' // red
     } else {
-      return 'bg-gradient-to-r from-[#ef4444] to-[#dc2626] bg-clip-text text-transparent' // muted red gradient
+      // Significantly below average (-1.0+ points)
+      return 'bg-gradient-to-r from-[#ef4444] to-[#dc2626] bg-clip-text text-transparent' // bright red gradient
     }
   }
 
@@ -196,6 +226,16 @@ function EvaluationCard({ evaluator, comment, ratings }: EvaluationCardProps) {
     (ratings.professional + ratings.willingness + ratings.brotherhood + 
      ratings.teamwork + ratings.contribution_personal + ratings.contribution_akpsi) / 6 : null
 
+  // Helper function to get color based on rating vs global average
+  const getRatingColor = (rating: number, globalAvg: number) => {
+    const diff = rating - globalAvg
+    if (diff >= 1.0) return 'text-[#4ade80]' // bright green
+    if (diff >= 0.5) return 'text-[#90ee90]' // light green
+    if (diff >= -0.5) return 'text-[#888888]' // gray (near average)
+    if (diff >= -1.0) return 'text-[#fca5a5]' // light red
+    return 'text-[#ef4444]' // red
+  }
+
   return (
     <div className="bg-[#232323] rounded-[12px] px-6 py-4 w-full">
       <div className="font-['coolvetica',sans-serif] font-light text-[16px] text-white leading-[1.5] tracking-[0.48px]">
@@ -208,13 +248,25 @@ function EvaluationCard({ evaluator, comment, ratings }: EvaluationCardProps) {
               </span>
             )}
             {ratings && (
-              <div className="flex gap-2 text-[11px] text-[#888888]">
-                <span>P:{ratings.professional}</span>
-                <span>W:{ratings.willingness}</span>
-                <span>B:{ratings.brotherhood}</span>
-                <span>T:{ratings.teamwork}</span>
-                <span>CP:{ratings.contribution_personal}</span>
-                <span>CA:{ratings.contribution_akpsi}</span>
+              <div className="flex gap-2 text-[11px]">
+                <span className={getRatingColor(ratings.professional, GLOBAL_AVERAGES.professional)}>
+                  P:{ratings.professional}
+                </span>
+                <span className={getRatingColor(ratings.willingness, GLOBAL_AVERAGES.willingness)}>
+                  W:{ratings.willingness}
+                </span>
+                <span className={getRatingColor(ratings.brotherhood, GLOBAL_AVERAGES.brotherhood)}>
+                  B:{ratings.brotherhood}
+                </span>
+                <span className={getRatingColor(ratings.teamwork, GLOBAL_AVERAGES.teamwork)}>
+                  T:{ratings.teamwork}
+                </span>
+                <span className={getRatingColor(ratings.contribution_personal, GLOBAL_AVERAGES.contribution_personal)}>
+                  CP:{ratings.contribution_personal}
+                </span>
+                <span className={getRatingColor(ratings.contribution_akpsi, GLOBAL_AVERAGES.contribution_akpsi)}>
+                  CA:{ratings.contribution_akpsi}
+                </span>
               </div>
             )}
           </div>
@@ -517,19 +569,19 @@ export function ApplicantDetailPage() {
   const questions = [
     {
       question: "Why would you like to become a brother of Alpha Kappa Psi?",
-      answer: applicantData["Please describe why you would like to become a brother of Alpha Kappa Psi (150 words or less)"] || "No response provided"
+      answer: applicantData["Please describe why you would like to become a brother of Alpha Kappa Psi"] || "No response provided"
     },
     {
       question: "What about Alpha Kappa Psi gets you excited and why?",
-      answer: applicantData["What about Alpha Kappa Psi gets you excited and why? (150 words or less)"] || "No response provided"
+      answer: applicantData["What about Alpha Kappa Psi gets you excited and why?"] || "No response provided"
     },
     {
       question: "What do you think you can bring to our chapter?",
-      answer: applicantData["What do you think you can bring to our chapter? Why do you think you stand out from the other candidates? (150 words or less)"] || "No response provided"
+      answer: applicantData["What do you think you can bring to our chapter? Why do you think you stand out from the other candidates?"] || "No response provided"
     },
     {
       question: "Share something that would make you a stronger candidate",
-      answer: applicantData["Share something you want us to know that would make you a stronger candidate and has yet to be fully represented through your resume or application (150 words or less)"] || "No response provided"
+      answer: applicantData["Share something you want us to know that would make you a stronger candidate and has yet to be fully represented through your resume or application"] || "No response provided"
     }
   ]
 

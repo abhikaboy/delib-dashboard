@@ -7,7 +7,7 @@ services:
     environment:
       # Backend environment variables
       - MONGODB_URI=${MONGODB_URI}
-      - DATABASE_NAME=fall2025
+      - DATABASE_NAME=spring2026
       - COLLECTION_NAME=${COLLECTION_NAME:-applications}
       - PORT=3001
       - NODE_ENV=production

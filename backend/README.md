@@ -57,6 +57,6 @@ The server uses Node.js `--watch` flag for auto-restart during development.
 
 ## Database
 
-- **Database**: fall2025
+- **Database**: spring2026
 - **Collection**: applications
 - **Connection**: MongoDB Atlas

@@ -7,7 +7,12 @@
   "scripts": {
     "start": "node server.js",
     "dev": "bun --watch server.js",
-    "build": "echo 'No build step required'"
+    "build": "echo 'No build step required'",
+    "create-aggregate": "node create-aggregate.js",
+    "populate-eval-data": "node populate-eval-data.js",
+    "create-indexes": "node create-indexes.js",
+    "compute-averages": "node compute-global-averages.js",
+    "setup-all": "node create-indexes.js && node create-aggregate.js && node populate-eval-data.js"
   },
   "engines": {
     "node": ">=18.0.0"

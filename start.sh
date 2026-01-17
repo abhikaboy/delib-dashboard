@@ -28,4 +28,4 @@ echo "Press Ctrl+C to stop both servers"
 echo ""
 
 # Start both frontend and backend concurrently
-npm run dev
+bun run dev

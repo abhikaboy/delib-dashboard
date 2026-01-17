@@ -12,7 +12,7 @@ console.log('========================');
 console.log('NODE_ENV:', process.env.NODE_ENV);
 console.log('PORT:', process.env.PORT);
 console.log('MONGODB_URI:', process.env.MONGODB_URI ? '[SET]' : '[NOT SET]');
-console.log('DATABASE_NAME:', process.env.DATABASE_NAME);
+console.log('DATABASE_NAME:', 'spring2026');
 console.log('COLLECTION_NAME:', process.env.COLLECTION_NAME);
 console.log('========================');
 
@@ -35,8 +35,8 @@ async function connectToMongoDB() {
     
     await client.connect();
     
-    // Ensure we're using the fall2025 database
-    const databaseName = process.env.DATABASE_NAME || 'fall2025';
+    // Ensure we're using the spring2026 database
+    const databaseName = process.env.DATABASE_NAME || 'spring2026';
     db = client.db(databaseName);
     
     console.log(`✅ Connected to MongoDB database: ${databaseName}`);
@@ -293,7 +293,8 @@ app.get('/api/applications/:id/fuzzy-evals', async (req, res) => {
 // Get all applications
 app.get('/api/applications', async (req, res) => {
   try {
-    const collection = db.collection(process.env.COLLECTION_NAME);
+    const collectionName = process.env.COLLECTION_NAME || 'applications';
+    const collection = db.collection(collectionName);
     const applications = await collection.find({}).toArray();
     
     console.log('Fetched applications count:', applications.length);
@@ -320,7 +321,8 @@ app.get('/api/applications', async (req, res) => {
 app.get('/api/applications/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const collection = db.collection(process.env.COLLECTION_NAME);
+    const collectionName = process.env.COLLECTION_NAME || 'applications';
+    const collection = db.collection(collectionName);
     
     // Try to find by MongoDB ObjectId or by custom id field
     let application;
@@ -364,7 +366,8 @@ app.get('/api/applications/:id', async (req, res) => {
 app.get('/api/applications/search/:query', async (req, res) => {
   try {
     const { query } = req.params;
-    const collection = db.collection(process.env.COLLECTION_NAME);
+    const collectionName = process.env.COLLECTION_NAME || 'applications';
+    const collection = db.collection(collectionName);
     
     const applications = await collection.find({
       $or: [
