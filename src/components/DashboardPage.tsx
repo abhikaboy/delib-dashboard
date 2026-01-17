@@ -5,9 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useAuth } from "@/contexts/AuthContext"
 import patternImage from '../pattern.png'
-
-// API configuration
-const API_BASE_URL = 'http://localhost:3001/api'
+import { API_BASE_URL } from "@/config/api"
 
 // Global averages for comparison (Spring 2026 - based on 840 evaluations)
 const GLOBAL_AVERAGES = {

@@ -1,0 +1,46 @@
+name: delib-dashboard
+region: nyc
+
+services:
+  - name: delib-dashboard
+    # Use your Docker image from GHCR
+    image:
+      registry_type: GHCR
+      registry: ghcr.io
+      repository: abhikaboy/delib-dashboard
+      tag: latest
+    
+    # Frontend runs on port 3000 (main HTTP port)
+    http_port: 3000
+    
+    # Environment variables
+    envs:
+      - key: MONGODB_URI
+        scope: RUN_TIME
+        type: SECRET
+      - key: DATABASE_NAME
+        value: spring2026
+        scope: RUN_TIME
+      - key: COLLECTION_NAME
+        value: applications
+        scope: RUN_TIME
+      - key: NODE_ENV
+        value: production
+        scope: RUN_TIME
+    
+    # Health check on frontend
+    health_check:
+      http_path: /
+      initial_delay_seconds: 30
+      period_seconds: 10
+      timeout_seconds: 5
+      success_threshold: 1
+      failure_threshold: 3
+    
+    # Resources
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    
+    # Routes
+    routes:
+      - path: /

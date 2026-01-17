@@ -7,12 +7,10 @@ services:
     environment:
       # Backend environment variables
       - MONGODB_URI=${MONGODB_URI}
-      - DATABASE_NAME=spring2026
+      - DATABASE_NAME=${DATABASE_NAME:-spring2026}
       - COLLECTION_NAME=${COLLECTION_NAME:-applications}
-      - PORT=3001
-      - NODE_ENV=production
-    env_file:
-      - .env
+      - PORT=${PORT:-3001}
+      - NODE_ENV=${NODE_ENV:-production}
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]

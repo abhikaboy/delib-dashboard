@@ -1,0 +1,49 @@
+# Digital Ocean App Platform Spec
+# This defines how your app should be deployed
+
+name: delib-dashboard
+region: nyc
+
+services:
+  - name: delib-dashboard
+    # Docker image from GitHub Container Registry
+    image:
+      registry_type: GHCR
+      registry: ghcr.io
+      repository: abhikaboy/delib-dashboard
+      tag: latest
+    
+    # IMPORTANT: Frontend runs on port 3000
+    http_port: 3000
+    
+    # Environment variables
+    envs:
+      - key: MONGODB_URI
+        scope: RUN_TIME
+        type: SECRET
+      - key: DATABASE_NAME
+        value: spring2026
+        scope: RUN_TIME
+      - key: COLLECTION_NAME
+        value: applications
+        scope: RUN_TIME
+      - key: NODE_ENV
+        value: production
+        scope: RUN_TIME
+    
+    # Health check
+    health_check:
+      http_path: /
+      initial_delay_seconds: 30
+      period_seconds: 10
+      timeout_seconds: 5
+      success_threshold: 1
+      failure_threshold: 3
+    
+    # Instance configuration
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    
+    # Routes
+    routes:
+      - path: /

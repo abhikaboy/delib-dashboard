@@ -3,18 +3,35 @@ import { MongoClient } from 'mongodb';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
-// Load environment variables
+// Load environment variables from .env file (for local development)
+// In production (Docker/App Platform), env vars come from the platform
 dotenv.config();
 
 // Print all environment variables for debugging
 console.log('🔍 Environment Variables:');
 console.log('========================');
-console.log('NODE_ENV:', process.env.NODE_ENV);
-console.log('PORT:', process.env.PORT);
-console.log('MONGODB_URI:', process.env.MONGODB_URI ? '[SET]' : '[NOT SET]');
-console.log('DATABASE_NAME:', 'spring2026');
-console.log('COLLECTION_NAME:', process.env.COLLECTION_NAME);
+console.log('NODE_ENV:', process.env.NODE_ENV || '[NOT SET]');
+console.log('PORT:', process.env.PORT || '[NOT SET]');
+console.log('MONGODB_URI:', process.env.MONGODB_URI ? '[SET]' : '[NOT SET - REQUIRED!]');
+console.log('DATABASE_NAME:', process.env.DATABASE_NAME || 'spring2026 (default)');
+console.log('COLLECTION_NAME:', process.env.COLLECTION_NAME || 'applications (default)');
 console.log('========================');
+
+// Validate required environment variables
+if (!process.env.MONGODB_URI) {
+  console.error('❌ ERROR: MONGODB_URI environment variable is not set!');
+  console.error('');
+  console.error('For App Platform:');
+  console.error('  1. Go to Apps → Your app → Settings');
+  console.error('  2. Add MONGODB_URI in App-Level Environment Variables');
+  console.error('  3. Format: mongodb+srv://user:pass@cluster.mongodb.net/spring2026');
+  console.error('');
+  console.error('For local development:');
+  console.error('  1. Create a .env file in the backend directory');
+  console.error('  2. Add: MONGODB_URI=your_connection_string');
+  console.error('');
+  process.exit(1);
+}
 
 const app = express();
 const PORT = process.env.PORT || 3001;
